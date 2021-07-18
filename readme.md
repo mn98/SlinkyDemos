@@ -102,7 +102,12 @@ Or, `sbt materialUiDev` starts a webpack-dev-server at http://localhost:8008 rec
 ### GoJS
 [Demo](https://scalablytyped.github.io/SlinkyDemos/gojs/)
 
-`sbt> gojs/start` starts a webpack-dev-server at http://localhost:8010 .
+`sbt> gojs/start` starts a webpack-dev-server at http://localhost:8019 .
+
+### TimeChart
+[Demo](https://scalablytyped.github.io/SlinkyDemos/timechart/)
+
+`sbt> timechart/start` starts a webpack-dev-server at http://localhost:8020 .
 
 ## React-native 
 [Expo demo you can run on your phone](https://expo.io/@scalablytyped/projects/react-native)

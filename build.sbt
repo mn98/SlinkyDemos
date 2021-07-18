@@ -361,6 +361,18 @@ lazy val gojs = project
     )
   )
 
+lazy val timechart = project
+  .enablePlugins(ScalablyTypedConverterPlugin)
+  .configure(baseSettings, browserProject, reactNpmDeps, bundlerSettings)
+  .settings(
+    useYarn := true,
+    webpackDevServerPort := 8020,
+    stFlavour := Flavour.Slinky,
+    Compile / npmDependencies ++= Seq(
+      "timechart" -> "0.5.2"
+    )
+  )
+
 /** Note: This can't use scalajs-bundler (at least I don't know how),
   *  so we run yarn ourselves with an external package.json.
   */
