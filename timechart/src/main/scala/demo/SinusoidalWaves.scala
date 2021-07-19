@@ -108,7 +108,7 @@ object SinusoidalWaves {
       chartUpdateInterval.map { interval =>
         button("Stop", id := "stop", onClick := { () => clearInterval(interval) })
       },
-      button("Follow Data", id := "follow", onClick := { chart.options.setRealTime(true) })
+      button("Follow Data", id := "follow", onClick := { () => chart.options.setRealTime(true) })
     )
 
   }
