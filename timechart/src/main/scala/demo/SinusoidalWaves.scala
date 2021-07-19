@@ -56,8 +56,8 @@ object SinusoidalWaves {
               visible = true
             )
           )
-//          newChart.options.setXRange(Max(20 * 1000, 0))
-          newChart.options.setXRange(timechartStrings.auto)
+          newChart.options.setXRange(Max(20 * 1000, 0))
+//          newChart.options.setXRange(timechartStrings.auto)
           newChart.options.setRealTime(true)
 //          newChart.options.zoom.foreach { zoom =>
 //            zoom.x.foreach(_.setMinDomainExtent(50))
@@ -65,7 +65,7 @@ object SinusoidalWaves {
 //          }
 //          newChart.options.setZoom(
 //            ResolvedZoomOptions()
-//              .setX(AxisZoomOptions(autoRange = true, None, 0, 0, 50))
+//              .setX(AxisZoomOptions(autoRange = true, 0, 0, 0, 50))
 //              .setY(AxisZoomOptions(autoRange = true, 0, 0, 0, 1))
 //          )
           setChart(newChart)
