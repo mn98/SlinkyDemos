@@ -9,7 +9,6 @@ import typings.std.global.performance
 import typings.timechart.anon.Max
 import typings.timechart.mod.{TimeChart, default => TimeChartConstructor}
 import typings.timechart.renderModelMod.DataPoint
-import typings.timechart.timechartStrings
 import typings.timechart.typesOptionsMod.{
   AxisZoomOptions,
   ResolvedZoomOptions,
@@ -20,6 +19,7 @@ import typings.timechart.typesOptionsMod.{
 import scala.scalajs.js
 import scala.scalajs.js.Date
 import scala.scalajs.js.timers.RawTimers.{clearInterval, setInterval}
+import scala.scalajs.js.timers.SetIntervalHandle
 
 @react
 object SinusoidalWaves {
@@ -30,7 +30,8 @@ object SinusoidalWaves {
     val chartDivRef = useRef[Div](null)
     val (chart, setChart) = useState[TimeChart](() => null)
     val (pointCount, setPointCount) = useState(0)
-    val (chartTime, setChartTime) = useState(performance.now() - 20 * 1000)
+    val (chartUpdateInterval, setChartUpdateInterval) = useState[Option[SetIntervalHandle]](None)
+    val (_, setChartTime) = useState(performance.now() - 20 * 1000)
 
     useEffect(
       () =>
@@ -54,51 +55,48 @@ object SinusoidalWaves {
               js.Array(),
               "Cos",
               visible = true
-            )
+            ).setLineWidth(2)
           )
           newChart.options.setXRange(Max(20 * 1000, 0))
-//          newChart.options.setXRange(timechartStrings.auto)
           newChart.options.setRealTime(true)
-//          newChart.options.zoom.foreach { zoom =>
-//            zoom.x.foreach(_.setMinDomainExtent(50))
-//            zoom.y.foreach(_.setMinDomainExtent(1))
-//          }
-//          newChart.options.setZoom(
-//            ResolvedZoomOptions()
-//              .setX(AxisZoomOptions(autoRange = true, 0, 0, 0, 50))
-//              .setY(AxisZoomOptions(autoRange = true, 0, 0, 0, 1))
-//          )
+          println("Setting chart zoom options")
+          newChart.options.setZoom(
+            ResolvedZoomOptions()
+              .setX(AxisZoomOptions(autoRange = true, 0, 0, 0, 50))
+              .setY(AxisZoomOptions(autoRange = true, 0, 0, 0, 1))
+          )
           setChart(newChart)
         },
       Seq(chartDivRef)
     )
 
+    val updateChart =
+      () =>
+        setChartTime { chartTime =>
+          val time = performance.now()
+          val n = time.toLong - chartTime.toLong
+          //println(s"Adding another $n points between times $chartTime and $time")
+          for (x <- chartTime.toLong until time.toLong) {
+            chart.options.series.find(_.name == "Sin").map { series =>
+              series.data.push(DataPoint(x.toDouble, Math.sin(x * 0.002) * 320))
+            }
+            chart.options.series.find(_.name == "Cos").map { series =>
+              series.data.push(DataPoint(x.toDouble, Math.cos(x * 0.002) * 200))
+            }
+          }
+          chart.options.series.find(_.name == "Sin").foreach(series => setPointCount(series.data.size))
+          chart.update()
+          time
+        }
+
     useEffect(
-      () => {
-        println("Setting up interval")
-        val interval = setInterval(
-          () =>
-            setChartTime {
-              chartTime =>
-                val time = performance.now()
-                val n = time.toLong - chartTime.toLong
-                //println(s"Adding another $n points between times $chartTime and $time")
-                for (x <- chartTime.toLong until time.toLong) {
-                  chart.options.series.find(_.name == "Sin").map { series =>
-                    series.data.push(DataPoint(x.toDouble, Math.sin(x * 0.002) * 320))
-                  }
-                  chart.options.series.find(_.name == "Cos").map { series =>
-                    series.data.push(DataPoint(x.toDouble, Math.cos(x * 0.002) * 200))
-                  }
-                }
-                chart.options.series.find(_.name == "Sin").foreach(series => setPointCount(series.data.size))
-                chart.update()
-                time
-            },
-          interval = 5
-        )
-        () => clearInterval(interval)
-      },
+      () =>
+        if (chart != null) {
+          println("Setting up interval")
+          val interval = setInterval(updateChart, interval = 5)
+          setChartUpdateInterval(Some(interval))
+          () => clearInterval(interval)
+        } else println(s"Chart is null"),
       Seq(chart)
     )
 
@@ -107,7 +105,9 @@ object SinusoidalWaves {
       h2("Adding 1000 points per second to chart."),
       p(span(id := "point-count")(pointCount), " Points"),
       div(ref := chartDivRef, className := "chart"),
-      button("Stop", id := "stop"),
+      chartUpdateInterval.map { interval =>
+        button("Stop", id := "stop", onClick := { () => clearInterval(interval) })
+      },
       button("Follow Data", id := "follow"),
       button("Toggle Legend", id := "legend")
     )
