@@ -104,6 +104,11 @@ Or, `sbt materialUiDev` starts a webpack-dev-server at http://localhost:8008 rec
 
 `sbt> gojs/start` starts a webpack-dev-server at http://localhost:8010 .
 
+### Vega-Lite
+[Demo](https://scalablytyped.github.io/SlinkyDemos/vega-lite/)
+
+`sbt> vega-lite/start` starts a webpack-dev-server at http://localhost:8020 .
+
 ## React-native 
 [Expo demo you can run on your phone](https://expo.io/@scalablytyped/projects/react-native)
 

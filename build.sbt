@@ -365,6 +365,20 @@ lazy val gojs = project
     )
   )
 
+lazy val `vega-lite` = project
+  .enablePlugins(ScalablyTypedConverterPlugin)
+  .configure(baseSettings, browserProject, reactNpmDeps, bundlerSettings)
+  .settings(
+    useYarn := true,
+    webpackDevServerPort := 8020,
+    stFlavour := Flavour.Slinky,
+    Compile / npmDependencies ++= Seq(
+      "vega" -> "5.22.1",
+      "vega-lite" -> "5.5.0",
+      "vega-embed" -> "6.21.0",
+    )
+  )
+
 /** Note: This can't use scalajs-bundler (at least I don't know how),
   *  so we run yarn ourselves with an external package.json.
   */
