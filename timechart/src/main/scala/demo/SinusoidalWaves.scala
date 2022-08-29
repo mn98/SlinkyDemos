@@ -12,6 +12,7 @@ import typings.timechart.renderModelMod.DataPoint
 import typings.timechart.typesOptionsMod.{
   AxisZoomOptions,
   ResolvedZoomOptions,
+  ScaleBase,
   TimeChartOptions,
   TimeChartSeriesOptions
 }
@@ -57,7 +58,13 @@ object SinusoidalWaves {
               visible = true
             ).setLineWidth(2)
           )
-          newChart.options.setXRange(Max(20 * 1000, 0))
+          // newChart.options.setXRange(Max(20 * 1000, 0))
+          val range = newChart.options.xRange
+          newChart.options.setXScaleType(() => new ScaleBase())
+          val scale = newChart.options.xScaleType()
+          println(s"x-axis range=$range and scale=$scale")
+          val yrange = newChart.options.yRange
+          println(s"y-axis range=$yrange")
           newChart.options.setRealTime(true)
           println("Setting chart zoom options")
           newChart.options.setZoom(
@@ -74,7 +81,7 @@ object SinusoidalWaves {
       () =>
         setChartTime { chartTime =>
           val time = performance.now()
-          val n = time.toLong - chartTime.toLong
+          //val n = time.toLong - chartTime.toLong
           //println(s"Adding another $n points between times $chartTime and $time")
           for (x <- chartTime.toLong until time.toLong) {
             chart.options.series.find(_.name == "Sin").map { series =>
