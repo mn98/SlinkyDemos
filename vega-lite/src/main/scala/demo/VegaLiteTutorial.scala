@@ -4,13 +4,14 @@ import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks.useEffect
 import slinky.web.html._
+import typings.vegaEmbed.mod.VisualizationSpec
 
 @react
 object VegaLiteTutorial {
 
   type Props = Unit
 
-  private val spec: String =
+  private val stringSpec: String =
     """
       |{
       |  $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
@@ -32,7 +33,7 @@ object VegaLiteTutorial {
       |}
       |""".stripMargin
 
-  private val spec2 =
+  private val typedSpec: VisualizationSpec =
     typings.vegaTypings.specMod
       .Spec()
       .set$schema("https://vega.github.io/schema/vega-lite/v5.json")
@@ -41,7 +42,8 @@ object VegaLiteTutorial {
         """
           |{
           |    values: [ {a: 'C', b: 2}, {a: 'C', b: 7}, {a: 'C', b: 4}, {a: 'D', b: 1}, {a: 'D', b: 2}, {a: 'D', b: 6}, {a: 'E', b: 8}, {a: 'E', b: 4}, {a: 'E', b: 7} ]
-          |}""".stripMargin)
+          |}""".stripMargin
+      )
       .set("mark", "bar")
       .set(
         "encoding",
@@ -63,13 +65,12 @@ object VegaLiteTutorial {
     useEffect(
       () => {
         println("Embedding vega-lite plot")
-        typings.vegaEmbed.mod.default("#vega-lite-tutorial", spec2)
+        typings.vegaEmbed.mod.default("#vega-lite-tutorial", typedSpec)
       },
       Seq.empty
     )
 
     div(id := "vega-lite-tutorial")
-
   }
 
 }
