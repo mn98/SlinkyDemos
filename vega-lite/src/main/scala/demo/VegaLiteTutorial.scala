@@ -6,66 +6,56 @@ import slinky.core.facade.Hooks.useEffect
 import slinky.web.html._
 import typings.vegaEmbed.mod.VisualizationSpec
 
+import scala.scalajs.js
+
 @react
 object VegaLiteTutorial {
 
   type Props = Unit
 
-  private val stringSpec: String =
-    """
-      |{
-      |  $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-      |  data: {
-      |    values: [ {a: 'C', b: 2}, {a: 'C', b: 7}, {a: 'C', b: 4}, {a: 'D', b: 1}, {a: 'D', b: 2}, {a: 'D', b: 6}, {a: 'E', b: 8}, {a: 'E', b: 4}, {a: 'E', b: 7} ]
-      |  },
-      |  mark: 'bar',
-      |  encoding: {
-      |    y: {field: 'a', type: 'nominal'},
-      |    x: {
-      |      aggregate: 'average',
-      |      field: 'b',
-      |      type: 'quantitative',
-      |      axis: {
-      |        title: 'Average of b'
-      |      }
-      |    }
-      |  }
-      |}
-      |""".stripMargin
+  private val data: typings.vegaTypings.dataMod.Data = typings.vegaTypings.dataMod.SourceData(
+    "values",
+    js.Array(
+      "{a: 'C', b: 2}",
+      "{a: 'C', b: 7}",
+      "{a: 'C', b: 4}",
+      "{a: 'D', b: 1}",
+      "{a: 'D', b: 2}",
+      "{a: 'D', b: 6}",
+      "{a: 'E', b: 8}",
+      "{a: 'E', b: 4}",
+      "{a: 'E', b: 7}",
+    )
+  )
 
-  private val typedSpec: VisualizationSpec =
+  private val spec: VisualizationSpec =
     typings.vegaTypings.specMod
       .Spec()
       .set$schema("https://vega.github.io/schema/vega-lite/v5.json")
-      .set(
-        "data",
-        """
-          |{
-          |    values: [ {a: 'C', b: 2}, {a: 'C', b: 7}, {a: 'C', b: 4}, {a: 'D', b: 1}, {a: 'D', b: 2}, {a: 'D', b: 6}, {a: 'E', b: 8}, {a: 'E', b: 4}, {a: 'E', b: 7} ]
-          |}""".stripMargin
-      )
+      .setWidth(400)
+      .setHeight(200)
+      .setDataVarargs(data)
       .set("mark", "bar")
-      .set(
-        "encoding",
-        """
-            |{
-            |    y: {field: 'a', type: 'nominal'},
-            |    x: {
-            |      aggregate: 'average',
-            |      field: 'b',
-            |      type: 'quantitative',
-            |      axis: {
-            |        title: 'Average of b'
-            |      }
-            |    }
-            |}""".stripMargin
-      )
+//      .set(
+//        "encoding",
+//        """|{
+//            |    "y": {"field": "a", "type": "nominal"},
+//            |    "x": {
+//            |      "aggregate": "average",
+//            |      "field": "b",
+//            |      "type": "quantitative",
+//            |      "axis": {
+//            |        "title": "Average of b"
+//            |      }
+//            |    }
+//            |}""".stripMargin
+//      )
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
     useEffect(
       () => {
         println("Embedding vega-lite plot")
-        typings.vegaEmbed.mod.default("#vega-lite-tutorial", typedSpec)
+        typings.vegaEmbed.mod.default("#vega-lite-tutorial", spec)
       },
       Seq.empty
     )
